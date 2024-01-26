@@ -4,15 +4,20 @@ import QRCode from 'qrcode.react';
 
 const QRCodeGenerator = () => {
   const [text, setText] = useState('');
-  const [qrColor, setQRColor] = useState('#000000'); // Default color is black
+  const [bgColor, setBGColor] = useState('#ffffff'); // Default background color is white
+  const [fgColor, setFGColor] = useState('#000000'); // Default foreground color is black
   const qrCodeRef = useRef(null);
 
   const handleInputChange = (e) => {
     setText(e.target.value);
   };
 
-  const handleColorChange = (e) => {
-    setQRColor(e.target.value);
+  const handleBGColorChange = (e) => {
+    setBGColor(e.target.value);
+  };
+
+  const handleFGColorChange = (e) => {
+    setFGColor(e.target.value);
   };
 
   const handleGenerateQRCode = () => {
@@ -32,18 +37,13 @@ const QRCodeGenerator = () => {
     canvas.height = 1000;
 
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'white'; // Set background color to white
+    ctx.fillStyle = bgColor; // Set background color
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const qrCodeImage = new Image();
     qrCodeImage.src = qrCodeRef.current.children[0].toDataURL('image/png');
 
     qrCodeImage.onload = () => {
-      ctx.mozImageSmoothingEnabled = false;
-      ctx.webkitImageSmoothingEnabled = false;
-      ctx.msImageSmoothingEnabled = false;
-      ctx.imageSmoothingEnabled = false;
-
       ctx.drawImage(qrCodeImage, 0, 0, canvas.width, canvas.height);
 
       if (format === 'png') {
@@ -87,8 +87,13 @@ const QRCodeGenerator = () => {
       </label>
 
       <label>
-        QR Code Color:
-        <input type="color" value={qrColor} onChange={handleColorChange} />
+        QR Code Background Color:
+        <input type="color" value={bgColor} onChange={handleBGColorChange} />
+      </label>
+
+      <label>
+        QR Code Foreground Color:
+        <input type="color" value={fgColor} onChange={handleFGColorChange} />
       </label>
 
       <button onClick={handleGenerateQRCode}>Generate QR Code</button>
@@ -98,7 +103,7 @@ const QRCodeGenerator = () => {
 
       {text && (
         <div ref={qrCodeRef}>
-          <QRCode value={text} size={256} fgColor={qrColor} />
+          <QRCode value={text} size={256} bgColor={bgColor} fgColor={fgColor} />
         </div>
       )}
 
